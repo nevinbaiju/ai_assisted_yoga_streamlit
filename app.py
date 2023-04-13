@@ -1,27 +1,53 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, RTCConfiguration
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, RTCConfiguration, WebRtcMode, create_mix_track, create_process_track
+from streamlit_server_state import server_state, server_state_lock
 
 import av
+import cv2
+import numpy as np
+import math
+import json
 
 from pose_estimator import PoseEstimator
+from _callbacks import *
 
-pe = PoseEstimator(window_size=8, smoothing_function='savgol')
+from typing import List, Literal
 
-class VideoProcessor(VideoProcessorBase):
-    def __init__(self):
-        self.style = 'color'    
-    
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-        print("Image", type(img))
-        pose_coords = pe.get_pose_coords(img)
-        if pose_coords:
-            annotated_img = pe.get_annotated_image(img, pose_coords)
-            angles = pe.get_angles(pose_coords)
-            st.subheader(f'{angles}')
-        else:
-            annotated_img = img
-        return av.VideoFrame.from_ndarray(annotated_img)
-        
-webrtc_streamer(key="vpf", video_processor_factory=VideoProcessor)
 
+with open('poses.json') as jsonfile:
+    pose_dict = json.load(jsonfile)
+poses = list(pose_dict.keys())
+
+with server_state_lock["webrtc_contexts"]:
+    if "webrtc_contexts" not in server_state:
+        server_state["webrtc_contexts"] = []
+
+with server_state_lock["mix_track"]:
+    if "mix_track" not in server_state:
+        server_state["mix_track"] = create_mix_track(
+            kind="video", mixer_callback=mixer_callback, key="mix"
+        )
+
+mix_track = server_state["mix_track"]
+self_ctx = webrtc_streamer(
+        key="self",
+        mode=WebRtcMode.SENDRECV,
+        media_stream_constraints={"video": True, "audio": False},
+        source_video_track=mix_track,
+        sendback_audio=False,
+    )
+
+self_process_track = None
+if self_ctx.input_video_track:
+    self_process_track = create_process_track(
+        input_track=self_ctx.input_video_track,
+        processor_factory=VideoProcessor,
+    )
+    mix_track.add_input_track(self_process_track)
+
+    pose = st.radio(
+        "Select transform type",
+        poses,
+        key="filter1-type",
+    )
+    self_process_track.processor.pe.set_reference_angle(pose)

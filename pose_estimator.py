@@ -185,12 +185,12 @@ class PoseEstimator:
 			cv2.line(annotated_image,
 					(int(nose_x), int(nose_y)),
 					(int((left_shoulder_x+right_shoulder_x)/2), int((left_shoulder_y+right_shoulder_y)/2)),
-					(0,0,255),3)
+					(0,255,0),3)
 			#Shoulder
 			cv2.line(annotated_image,
 					(int(left_shoulder_x), int(left_shoulder_y)),
 					(int(right_shoulder_x), int(right_shoulder_y)),
-					(0,0,255),3)
+					(0,255,0),3)
 			#Shoulder-Elbow
 			cv2.line(annotated_image,
 					(int(left_shoulder_x), int(left_shoulder_y)),
@@ -213,16 +213,16 @@ class PoseEstimator:
 			cv2.line(annotated_image,
 					(int(left_shoulder_x), int(left_shoulder_y)),
 					(int(left_hip_x), int(left_hip_y)),
-					(0,0,255),3)   
+					(0,255,0),3)   
 			cv2.line(annotated_image,
 					(int(right_shoulder_x), int(right_shoulder_y)),
 					(int(right_hip_x), int(right_hip_y)),
-					(0,0,255),3)
+					(0,255,0),3)
 			#Hip
 			cv2.line(annotated_image,
 					(int(left_hip_x), int(left_hip_y)),
 					(int(right_hip_x), int(right_hip_y)),
-					(0,0,255),3)   
+					(0,255,0),3)   
 			#Hip-Knee
 			cv2.line(annotated_image,
 					(int(left_hip_x), int(left_hip_y)),

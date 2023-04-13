@@ -16,7 +16,7 @@ try:
     posename = args.posename
 except Exception as e:
     print(e)
-    print("Usage: python pose_recorder.py <image path> <pose name>")
+    print("Usage: python pose_recorder.py --img_path <image path> --posename <pose name>")
     exit()
 
 img = cv2.imread(img_path)
@@ -38,6 +38,7 @@ while True:
             cv2.imshow("image", annotated_img)
             key = cv2.waitKey(0)
             if key == 113:
+                print(f"Pose discarded")
                 break
             elif key == 121:
                 with open('poses.json', 'r') as poses:
@@ -46,9 +47,10 @@ while True:
                 
                 with open('poses.json', 'w') as poses:
                     json.dump(pose_dict, poses)
+                
+                print(f"Succesfully registered {posename}")
                 break
         except ValueError as ve:
             print(ve)
-print(f"Succesfully registered {posename}")
 cv2.destroyAllWindows()
 
