@@ -4,6 +4,7 @@ numpy==1.23.5
 imutils==0.5.4
 matplotlib==3.6.2
 scipy==1.9.3
-streamlit-webrtc==0.44.0
-streamlit-server-state==0.15.0
+streamlit==0.85
+streamlit-webrtc
+streamlit-server-state
 av==9.2.0
