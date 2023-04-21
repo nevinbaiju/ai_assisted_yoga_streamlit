@@ -22,3 +22,6 @@
 
 1) Perform the installation steps above
 2) Run ```python pose_recorder.py --img_path <image path> --posename <pose name>```
+
+docker build -t yoga-app .
+docker run -dp 8501:8501 yoga-app

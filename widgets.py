@@ -84,13 +84,8 @@ def display_reference_image(pose, poses):
         with open(f'pose_images/{pose}.jpg', 'rb') as file:
             img = file.read()
             data_url = base64.b64encode(img).decode("utf-8")
-        # my_html = """
-        # <h1>asdfsadfsdf</h1>
-        # <img src="data:image/gif;base64,{0}" height=500px width=400px>
-        # """.format(data_url)
-        # html(my_html)
-        st.markdown("<div class=pose_image>", unsafe_allow_html=True,)
-        st.markdown(f'<img src="data:image/gif;base64,{data_url}" height=350px width=400px>', unsafe_allow_html=True,)
+        st.markdown("<div class=pose_image >", unsafe_allow_html=True,)
+        st.markdown(f'<img class=pose_image src="data:image/gif;base64,{data_url}" height=300px width=350px style="margin-left:745px; margin-top:-1050px">', unsafe_allow_html=True,)
         st.markdown("</div>", unsafe_allow_html=True,)
         with open('cache', 'w') as file:
             file.write(f'<img src="data:image/gif;base64,{data_url}" height=500px width=400px>')
