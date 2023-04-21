@@ -20,3 +20,4 @@ poses, pose_dict = read_poses_json()
 pose = camera_preview(poses)
 timed_session()  
 display_reference_image(pose, poses)
+#
