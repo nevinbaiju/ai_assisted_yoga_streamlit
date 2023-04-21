@@ -73,7 +73,7 @@ def camera_preview(poses):
     
     return pose
 
-def display_reference_image(pose, poses):
+def display_reference_image(poses):
 
     pose = st.radio(
         "Select the yoga pose to learn",
@@ -85,7 +85,7 @@ def display_reference_image(pose, poses):
             img = file.read()
             data_url = base64.b64encode(img).decode("utf-8")
         st.markdown("<div class=pose_image >", unsafe_allow_html=True,)
-        st.markdown(f'<img class=pose_image src="data:image/gif;base64,{data_url}" height=300px width=350px style="margin-left:745px; margin-top:-1050px">', unsafe_allow_html=True,)
+        st.markdown(f'<img class=pose_image src="data:image/gif;base64,{data_url}" height=200px width=150px style="margin-left:470px; margin-top:-200px">', unsafe_allow_html=True,)
         st.markdown("</div>", unsafe_allow_html=True,)
         with open('cache', 'w') as file:
             file.write(f'<img src="data:image/gif;base64,{data_url}" height=500px width=400px>')

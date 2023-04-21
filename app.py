@@ -17,7 +17,8 @@ from typing import List, Literal
 
 poses, pose_dict = read_poses_json()
 
+
+display_reference_image(poses)
 pose = camera_preview(poses)
 timed_session()  
-display_reference_image(pose, poses)
 #
