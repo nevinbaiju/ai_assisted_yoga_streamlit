@@ -30,8 +30,8 @@ class PoseEstimator:
 
 	def set_reference_angle(self, pose_name):
 		with open('poses.json') as jsonfile:
-				pose_dict = json.load(jsonfile)
-		self.reference_angles = pose_dict[pose_name]
+				self.pose_dict = json.load(jsonfile)
+		self.reference_angles = self.pose_dict[pose_name]
 
 		
 	def get_pose_coords(self, image):
@@ -111,7 +111,12 @@ class PoseEstimator:
 		return tuple(smoothened_coords)
 	
 	def get_angle_colour(self, estimated_angles):
+		with open('.current_pose.txt', 'r') as file:
+			pose = file.read()
+		self.reference_angles = self.pose_dict[pose]
 		angle_diff = {}
+		# print(estimated_angles)
+		# print(self.reference_angles)
 		for key in self.reference_angles.keys():
 			diff = abs(((self.reference_angles[key] - estimated_angles[key])/90))
 			colour = (0, abs(int((1-diff)*255)), abs(int(diff*255)))
