@@ -7,8 +7,10 @@ from _callbacks import *
 
 import base64
 
+
 def timed_session():
-    if st.button('Start timed session'):
+    if st.button('Start Timed Session'):
+        st.write('Your Timed Session Has Started')
         
         my_html = """
         <script>
