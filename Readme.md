@@ -16,10 +16,3 @@
 2) Open a terminal in the cloned directory.
 3) Run command: ```pip install -r requirements.txt```
 4) Run ```streamlit run app.py```
-
-##### For registering new poses.
-
-1) Clone this repository.
-2) Open a terminal in the cloned directory.
-3) Run command: ```pip install -r requirements.txt```
-4) Run the command: ```export FLASK_APP=pose_recorder_app.py``` if you are in a unix system and ```SET FLASK_APP=pose_recorder_app.py``` if you are in windows.
