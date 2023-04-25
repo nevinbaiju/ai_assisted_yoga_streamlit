@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, abort
+from helpers import extract_poses, save_angles
 import time
 import os
 
 if not os.path.exists('uploads'):
     os.mkdir('uploads')
+if not os.path.exists('processed_cache'):
+    os.mkdir('processed_cache')
 
 app = Flask(__name__, static_folder='./templates/')
 
@@ -36,10 +39,13 @@ def upload_image():
         if image:
             filename = str(time.time())
             image.save(f'./uploads/{filename}.jpg')
+            extract_poses(f'./uploads/{filename}.jpg')
 
         return redirect(url_for('upload_image'))
     else:
         return render_template('upload_screen.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
