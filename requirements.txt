@@ -8,3 +8,4 @@ streamlit==0.85
 streamlit-webrtc
 streamlit-server-state
 av==9.2.0
+flask
