@@ -6,3 +6,4 @@ trial_app.py
 __pycache__
 .ipynb_checkpoints
 uploads/
+processed_cache
