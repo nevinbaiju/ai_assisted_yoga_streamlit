@@ -5,23 +5,21 @@
 1) Install Docker.
 2) Clone this repository.
 3) Open a terminal in the cloned directory.
-4) Run the docker command: ```docker run -p 8501:8501 -it $(sudo docker build -q .)```
-5) Open the link http://localhost:8501 in the browser.
-
+4) Run the docker command: ```docker-compose build``` to build all the containers.
+5) Run the docker command: ```docker-compose up``` to run the containers.
+6) Open the link http://localhost:8501 to start practising yoga.
+7) Open the link http://localhost:5000 to register new poses as an admin.
 
 ### Setting up - Normal Python
 
-1) Install Docker.
-2) Clone this repository.
-3) Open a terminal in the cloned directory.
-4) Run command: ```pip install -r requirements.txt```
-5) Run ```streamlit run app.py```
-6) Open the link http://localhost:8501 in the browser.
+1) Clone this repository.
+2) Open a terminal in the cloned directory.
+3) Run command: ```pip install -r requirements.txt```
+4) Run ```streamlit run app.py```
 
-#### Registering new poses
+##### For registering new poses.
 
-1) Perform the installation steps above
-2) Run ```python pose_recorder.py --img_path <image path> --posename <pose name>```
-
-docker build -t yoga-app .
-docker run -dp 8501:8501 yoga-app
+1) Clone this repository.
+2) Open a terminal in the cloned directory.
+3) Run command: ```pip install -r requirements.txt```
+4) Run the command: ```export FLASK_APP=pose_recorder_app.py``` if you are in a unix system and ```SET FLASK_APP=pose_recorder_app.py``` if you are in windows.
