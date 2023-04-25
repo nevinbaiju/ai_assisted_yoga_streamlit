@@ -4,27 +4,41 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    {% if image %}
-            <img src="{{ url_for('static', filename=image) }}">
-            "{{ angles }}"
+    
+            
+
+        <div class="poses">
+            <ul>
+                {% for pose in poses %}
+                    <li>{{ pose }}</li>
+                    
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if image %}
+    <div class="uploaded_image">
+            <img src="{{ url_for('static', filename=image) }}" id="up_image">
+        </div>
+        <div class="pose_list">
+            
             <form method="POST" action="{{ url_for('confirm_angles') }}">
                 <input type="hidden" name="angles" value="{{ angles }}">
                 <label>Enter a name for your new pose</label>
                 <input type="text" id="pose_name" name="pose_name">
                 <button type="submit">Confirm</button>
             </form>
+        </div>
             
     {% endif %}
-    <ul>
-        {% for pose in poses %}
-            <li>{{ pose }}</li>
-        {% endfor %}
-    </ul>
+    
     <div class="login">
+        {% if not image %}
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_image') }}">
             <input type="file" name="image">
             <button type="submit">Upload</button>
-        </form>        
+        </form>     
+        {% endif %}   
       </div>
 </body>
 </html>
