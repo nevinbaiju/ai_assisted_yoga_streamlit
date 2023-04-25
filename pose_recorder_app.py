@@ -39,9 +39,9 @@ def upload_image():
         if image:
             filename = str(time.time())
             image.save(f'./uploads/{filename}.jpg')
-            extract_poses(f'./uploads/{filename}.jpg')
+            angles = extract_poses(f'./uploads/{filename}.jpg')
 
-        return redirect(url_for('upload_image'))
+        return render_template('upload_screen.html', image='processed_cache/1.jpg', angles=angles)
     else:
         return render_template('upload_screen.html')
 

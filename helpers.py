@@ -18,7 +18,7 @@ def extract_poses(img_path):
     colour_dict = p.get_angle_colour_dummy(angles)
     annotated_img = p.get_annotated_image(img, coord, colour_dict)
 
-    cv2.imwrite('processed_cache/1.jpg', annotated_img)
+    cv2.imwrite('templates/processed_cache/1.jpg', annotated_img)
 
     return angles
 

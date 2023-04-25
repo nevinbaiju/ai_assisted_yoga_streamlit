@@ -4,6 +4,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    {% if image %}
+            <img src="{{ url_for('static', filename=image) }}">
+            "{{ angles }}"
+    {% endif %}
     <div class="login">
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_image') }}">
             <input type="file" name="image">
