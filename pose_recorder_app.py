@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, abort
-from helpers import extract_poses, save_angles
+from helpers import extract_poses, save_angles, read_poses_json
 import time
 import os
 
 if not os.path.exists('uploads'):
     os.mkdir('uploads')
-if not os.path.exists('processed_cache'):
-    os.mkdir('processed_cache')
+if not os.path.exists('templates/processed_cache'):
+    os.mkdir('templates/processed_cache')
 
 app = Flask(__name__, static_folder='./templates/')
 
@@ -33,6 +33,7 @@ def login():
 
 @app.route('/upload_image', methods=['POST', 'GET'])
 def upload_image():
+    poses, _ = read_poses_json()
     if request.method == 'POST':
         image = request.files['image']
         print(image)
@@ -41,11 +42,22 @@ def upload_image():
             image.save(f'./uploads/{filename}.jpg')
             angles = extract_poses(f'./uploads/{filename}.jpg')
 
-        return render_template('upload_screen.html', image='processed_cache/1.jpg', angles=angles)
+        return render_template('upload_screen_trial.html', image='processed_cache/1.jpg', 
+                                                           angles=angles, 
+                                                           poses=poses)
     else:
-        return render_template('upload_screen.html')
+        return render_template('upload_screen_trial.html', poses=poses)
 
+@app.route('/confirm_angles', methods=['POST', 'GET'])
+def confirm_angles():
+    if request.method == 'POST':
+        angles = eval(request.form['angles'])
+        pose_name = request.form['pose_name']
+        save_angles(angles, pose_name)
 
+        return redirect(url_for('upload_image'))
+    else:
+        abort(403)
 
 if __name__ == '__main__':
     app.run(debug=True)

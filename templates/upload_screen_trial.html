@@ -7,7 +7,19 @@
     {% if image %}
             <img src="{{ url_for('static', filename=image) }}">
             "{{ angles }}"
+            <form method="POST" action="{{ url_for('confirm_angles') }}">
+                <input type="hidden" name="angles" value="{{ angles }}">
+                <label>Enter a name for your new pose</label>
+                <input type="text" id="pose_name" name="pose_name">
+                <button type="submit">Confirm</button>
+            </form>
+            
     {% endif %}
+    <ul>
+        {% for pose in poses %}
+            <li>{{ pose }}</li>
+        {% endfor %}
+    </ul>
     <div class="login">
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_image') }}">
             <input type="file" name="image">
