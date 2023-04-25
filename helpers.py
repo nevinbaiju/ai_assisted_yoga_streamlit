@@ -22,9 +22,9 @@ def extract_poses(img_path):
 
     return angles
 
-def save_angles(angle_dict):
+def save_angles(angle_dict, posename):
     with open('poses.json', 'r') as poses:
         pose_dict = json.load(poses)
-        pose_dict[posename] = angles
+        pose_dict[posename] = angle_dict
     with open('poses.json', 'w') as poses:
         json.dump(pose_dict, poses)
