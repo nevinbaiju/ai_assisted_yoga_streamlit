@@ -223,8 +223,49 @@ input:focus {
     0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
+.json_table {
+  padding-right: 1204px;
+  margin-left: 50px;
+  margin-top: 50px;
+}
 .json_table .table {
   color: white;
-  margin-left: 250px;
-  margin-right: 250px;
+  /* margin-left: 250px; */
+  /* margin-right: 250px; */
+}
+input:focus {
+  box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4),
+    0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.uploaded_image img {
+  height: 250px;
+  padding-left: 560px;
+}
+
+.pose_list {
+  color: white;
+  width: 250px;
+  margin-left: 515px;
+}
+
+.poses {
+  color: white;
+}
+
+.upload_page_img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload_page_img img {
+  margin-top: 30px;
+}
+
+.pose_name {
+  color: white;
+  width: 250px;
+  margin-left: 645px;
+  padding-top: 19px;
 }

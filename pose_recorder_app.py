@@ -34,6 +34,7 @@ def login():
 @app.route('/upload_image', methods=['POST', 'GET'])
 def upload_image():
     poses, _ = read_poses_json()
+    # poses = enumerate(poses)
     if request.method == 'POST':
         image = request.files['image']
         print(image)
@@ -42,11 +43,11 @@ def upload_image():
             image.save(f'./uploads/{filename}.jpg')
             angles = extract_poses(f'./uploads/{filename}.jpg')
 
-        return render_template('upload_screen_trial.html', image='processed_cache/1.jpg', 
+        return render_template('upload_screen.html', image='processed_cache/1.jpg', 
                                                            angles=angles, 
                                                            poses=poses)
     else:
-        return render_template('upload_screen_trial.html', poses=poses)
+        return render_template('upload_screen.html', poses=poses)
 
 @app.route('/confirm_angles', methods=['POST', 'GET'])
 def confirm_angles():
