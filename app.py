@@ -1,3 +1,7 @@
+"""
+This is the main streamlit app responsible for running all the code related to learning a yoga pose.
+"""
+
 import streamlit as st
 
 import av
