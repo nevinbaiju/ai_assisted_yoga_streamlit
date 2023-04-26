@@ -14,7 +14,10 @@ class PoseEstimator:
 	
 	def __init__(self, window_size=8, smoothing_function=None):
 		"""
-		Window Size to specify how much frames to be considered for smoothing
+		The pose estimator class is responsible for the object which handles the analysis and 
+		comparison of poses.
+		:param int window_size: The number of frames aggregated to generate a smooth pose estimation.
+		:param str smoothing_function: The smoothing function used to generate a smooth pose estimation.
 		"""
 		if(smoothing_function == 'savgol') and ((window_size % 2) == 0):
 			self.window_size = window_size - 1
@@ -29,6 +32,11 @@ class PoseEstimator:
 		self.set_reference_angle('Warrior Pose')
 
 	def set_reference_angle(self, pose_name):
+		"""
+		This function sets a reference angle to the module so that all the poses that the module detects can 
+		be compared against this reference angle.
+		:pose_name str The name of the pose that should be taken as the reference pose.
+		"""
 		with open('poses.json') as jsonfile:
 				pose_dict = json.load(jsonfile)
 		self.reference_angles = pose_dict[pose_name]
@@ -36,7 +44,15 @@ class PoseEstimator:
 		
 	def get_pose_coords(self, image):
 		"""
-		Function returns the coordinates of wrist, elbow and shoulder if given an image.
+		This function takes an image and returns the pose coordinates for the following parts of the body:
+		- Both wrists
+		- Both elbows
+		- Both shoulders
+		- Both Hip ends
+		- Both Knees
+		- Both Angles
+		- Nose
+		:param image cv2.Image: The image frame that needs to be analyzed.
 		"""
 		try:
 			image_height, image_width, _ = image.shape
@@ -85,9 +101,9 @@ class PoseEstimator:
 	
 	def smoothen_coords(self, pose_coords):
 		"""
-		Function to smooth the coordinates of last n coordinates where
-		n is the window size.
-		Input is a list of tuple of coordinates.
+		This function keeps a buffer of a fixed number of poses analyzed from the past frames smoothen the coordinates.
+		This prevents gittering from frame to frame and helps provide the users with a better user interface.
+		:param dict pose_coords: The pose coordinates of the current frame.
 		"""
 		if len(self.coords_array) == self.window_size:
 			self.coords_array.pop(0)
@@ -111,6 +127,10 @@ class PoseEstimator:
 		return tuple(smoothened_coords)
 	
 	def get_angle_colour(self, estimated_angles):
+		"""
+		This function assigns an approporiate colour depending on the error of the angle the user makes with the reference pose.
+		:param dict estimated_angles: The angles between the body parts of the user that is analyzed.
+		"""
 		angle_diff = {}
 		for key in self.reference_angles.keys():
 			diff = abs(((self.reference_angles[key] - estimated_angles[key])/90))
@@ -119,132 +139,144 @@ class PoseEstimator:
 		return angle_diff
 
 	def get_angle_colour_dummy(self, estimated_angles):
+		"""A function created to provide angle colours when there is no need for scoring."""
 		angle_diff = {}
 		for key in self.reference_angles.keys():
 			angle_diff[key] = (0, 0, 255)
 		return angle_diff
 
 	def get_annotated_image(self, image, pose_coords, joint_colours):
-			"""
-			Function to draw and visualize the coordinates in the image.
-			"""
-			left_wrist_x, left_wrist_y, left_elbow_x, left_elbow_y, left_shoulder_x, left_shoulder_y, left_hip_x, left_hip_y, left_knee_x, left_knee_y, left_ankle_x, left_ankle_y, right_wrist_x, right_wrist_y, right_elbow_x, right_elbow_y, right_shoulder_x, right_shoulder_y, right_hip_x, right_hip_y, right_knee_x, right_knee_y, right_ankle_x, right_ankle_y, nose_x, nose_y = pose_coords
-			
-			annotated_image = image.copy()
-			
-			##Drawing Cirlces
-			#Nose
-			cv2.circle(annotated_image,
-					(int(nose_x), int(nose_y)),
-					10,(0,0,255),-1)
-			#Shoulders
-			cv2.circle(annotated_image,
-					(int(left_shoulder_x), int(left_shoulder_y)),
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_shoulder_x), int(right_shoulder_y)),
-					10,(0,0,255),-1)
-			#Elbows
-			cv2.circle(annotated_image,
-					(int(left_elbow_x), int(left_elbow_y)),
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_elbow_x), int(right_elbow_y)),
-					10,(0,0,255),-1)
-			#Wrists
-			cv2.circle(annotated_image,
-					(int(left_wrist_x), int(left_wrist_y)), 
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_wrist_x), int(right_wrist_y)), 
-					10,(0,0,255),-1)
-			#Hips
-			cv2.circle(annotated_image,
-					(int(left_hip_x), int(left_hip_y)), 
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_hip_x), int(right_hip_y)), 
-					10,(0,0,255),-1)
-			#Knees
-			cv2.circle(annotated_image,
-					(int(left_knee_x), int(left_knee_y)), 
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_knee_x), int(right_knee_y)), 
-					10,(0,0,255),-1)
-			#Ankles
-			cv2.circle(annotated_image,
-					(int(left_ankle_x), int(left_ankle_y)), 
-					10,(0,0,255),-1)
-			cv2.circle(annotated_image,
-					(int(right_ankle_x), int(right_ankle_y)), 
-					10,(0,0,255),-1)
+		"""
+		Function to draw and visualize the coordinates in the image.
 		
-			##Drawing Lines
-			#Nose-Shoulder
-			cv2.line(annotated_image,
-					(int(nose_x), int(nose_y)),
-					(int((left_shoulder_x+right_shoulder_x)/2), int((left_shoulder_y+right_shoulder_y)/2)),
-					(0,255,0),3)
-			#Shoulder
-			cv2.line(annotated_image,
-					(int(left_shoulder_x), int(left_shoulder_y)),
-					(int(right_shoulder_x), int(right_shoulder_y)),
-					(0,255,0),3)
-			#Shoulder-Elbow
-			cv2.line(annotated_image,
-					(int(left_shoulder_x), int(left_shoulder_y)),
-					(int(left_elbow_x), int(left_elbow_y)),
-					joint_colours['left_shoulder'],3)
-			cv2.line(annotated_image,
-					(int(right_shoulder_x), int(right_shoulder_y)),
-					(int(right_elbow_x), int(right_elbow_y)),
-					joint_colours['right_shoulder'],3)
-			#Elbow-Wrist
-			cv2.line(annotated_image,
-					(int(left_elbow_x), int(left_elbow_y)),
-					(int(left_wrist_x), int(left_wrist_y)),
-					joint_colours['left_elbow'],3)
-			cv2.line(annotated_image,
-					(int(right_elbow_x), int(right_elbow_y)),
-					(int(right_wrist_x), int(right_wrist_y)),
-					joint_colours['right_elbow'],3)                     
-			#Shoulder-Hip
-			cv2.line(annotated_image,
-					(int(left_shoulder_x), int(left_shoulder_y)),
-					(int(left_hip_x), int(left_hip_y)),
-					(0,255,0),3)   
-			cv2.line(annotated_image,
-					(int(right_shoulder_x), int(right_shoulder_y)),
-					(int(right_hip_x), int(right_hip_y)),
-					(0,255,0),3)
-			#Hip
-			cv2.line(annotated_image,
-					(int(left_hip_x), int(left_hip_y)),
-					(int(right_hip_x), int(right_hip_y)),
-					(0,255,0),3)   
-			#Hip-Knee
-			cv2.line(annotated_image,
-					(int(left_hip_x), int(left_hip_y)),
-					(int(left_knee_x), int(left_knee_y)),
-					joint_colours['left_leg'],3)   
-			cv2.line(annotated_image,
-					(int(right_hip_x), int(right_hip_y)),
-					(int(right_knee_x), int(right_knee_y)),
-					joint_colours['right_leg'],3)
-			#Knee-Ankle
-			cv2.line(annotated_image,
-					(int(left_knee_x), int(left_knee_y)),
-					(int(left_ankle_x), int(left_ankle_y)),
-					joint_colours['left_knee'],3)   
-			cv2.line(annotated_image,
-					(int(right_knee_x), int(right_knee_y)),
-					(int(right_ankle_x), int(right_ankle_y)),
-					joint_colours['right_knee'],3)  
-			
-			return cv2.flip(annotated_image, 1)
+		:param cv2.Image image: The current frame from the webcam stream.
+		:param str pose_coords: The estimated pose coordinates of the image.
+		:param dict joint_colours: The assigned colours of the annotations depending on the errors.
+		"""
+		left_wrist_x, left_wrist_y, left_elbow_x, left_elbow_y, left_shoulder_x, left_shoulder_y, left_hip_x, left_hip_y, left_knee_x, left_knee_y, left_ankle_x, left_ankle_y, right_wrist_x, right_wrist_y, right_elbow_x, right_elbow_y, right_shoulder_x, right_shoulder_y, right_hip_x, right_hip_y, right_knee_x, right_knee_y, right_ankle_x, right_ankle_y, nose_x, nose_y = pose_coords
+		
+		annotated_image = image.copy()
+		
+		##Drawing Cirlces
+		#Nose
+		cv2.circle(annotated_image,
+				(int(nose_x), int(nose_y)),
+				10,(0,0,255),-1)
+		#Shoulders
+		cv2.circle(annotated_image,
+				(int(left_shoulder_x), int(left_shoulder_y)),
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_shoulder_x), int(right_shoulder_y)),
+				10,(0,0,255),-1)
+		#Elbows
+		cv2.circle(annotated_image,
+				(int(left_elbow_x), int(left_elbow_y)),
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_elbow_x), int(right_elbow_y)),
+				10,(0,0,255),-1)
+		#Wrists
+		cv2.circle(annotated_image,
+				(int(left_wrist_x), int(left_wrist_y)), 
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_wrist_x), int(right_wrist_y)), 
+				10,(0,0,255),-1)
+		#Hips
+		cv2.circle(annotated_image,
+				(int(left_hip_x), int(left_hip_y)), 
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_hip_x), int(right_hip_y)), 
+				10,(0,0,255),-1)
+		#Knees
+		cv2.circle(annotated_image,
+				(int(left_knee_x), int(left_knee_y)), 
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_knee_x), int(right_knee_y)), 
+				10,(0,0,255),-1)
+		#Ankles
+		cv2.circle(annotated_image,
+				(int(left_ankle_x), int(left_ankle_y)), 
+				10,(0,0,255),-1)
+		cv2.circle(annotated_image,
+				(int(right_ankle_x), int(right_ankle_y)), 
+				10,(0,0,255),-1)
+	
+		##Drawing Lines
+		#Nose-Shoulder
+		cv2.line(annotated_image,
+				(int(nose_x), int(nose_y)),
+				(int((left_shoulder_x+right_shoulder_x)/2), int((left_shoulder_y+right_shoulder_y)/2)),
+				(0,255,0),3)
+		#Shoulder
+		cv2.line(annotated_image,
+				(int(left_shoulder_x), int(left_shoulder_y)),
+				(int(right_shoulder_x), int(right_shoulder_y)),
+				(0,255,0),3)
+		#Shoulder-Elbow
+		cv2.line(annotated_image,
+				(int(left_shoulder_x), int(left_shoulder_y)),
+				(int(left_elbow_x), int(left_elbow_y)),
+				joint_colours['left_shoulder'],3)
+		cv2.line(annotated_image,
+				(int(right_shoulder_x), int(right_shoulder_y)),
+				(int(right_elbow_x), int(right_elbow_y)),
+				joint_colours['right_shoulder'],3)
+		#Elbow-Wrist
+		cv2.line(annotated_image,
+				(int(left_elbow_x), int(left_elbow_y)),
+				(int(left_wrist_x), int(left_wrist_y)),
+				joint_colours['left_elbow'],3)
+		cv2.line(annotated_image,
+				(int(right_elbow_x), int(right_elbow_y)),
+				(int(right_wrist_x), int(right_wrist_y)),
+				joint_colours['right_elbow'],3)                     
+		#Shoulder-Hip
+		cv2.line(annotated_image,
+				(int(left_shoulder_x), int(left_shoulder_y)),
+				(int(left_hip_x), int(left_hip_y)),
+				(0,255,0),3)   
+		cv2.line(annotated_image,
+				(int(right_shoulder_x), int(right_shoulder_y)),
+				(int(right_hip_x), int(right_hip_y)),
+				(0,255,0),3)
+		#Hip
+		cv2.line(annotated_image,
+				(int(left_hip_x), int(left_hip_y)),
+				(int(right_hip_x), int(right_hip_y)),
+				(0,255,0),3)   
+		#Hip-Knee
+		cv2.line(annotated_image,
+				(int(left_hip_x), int(left_hip_y)),
+				(int(left_knee_x), int(left_knee_y)),
+				joint_colours['left_leg'],3)   
+		cv2.line(annotated_image,
+				(int(right_hip_x), int(right_hip_y)),
+				(int(right_knee_x), int(right_knee_y)),
+				joint_colours['right_leg'],3)
+		#Knee-Ankle
+		cv2.line(annotated_image,
+				(int(left_knee_x), int(left_knee_y)),
+				(int(left_ankle_x), int(left_ankle_y)),
+				joint_colours['left_knee'],3)   
+		cv2.line(annotated_image,
+				(int(right_knee_x), int(right_knee_y)),
+				(int(right_ankle_x), int(right_ankle_y)),
+				joint_colours['right_knee'],3)  
+		
+		return cv2.flip(annotated_image, 1)
 	
 	def calculate_angle(self, point_1, point_2, point_3):
+		"""
+			Function to draw and visualize the coordinates in the image.
+			
+			:param cv2.Image image: The current frame from the webcam stream.
+			:param str pose_coords: The estimated pose coordinates of the image.
+			:param dict joint_colours: The assigned colours of the annotations depending on the errors.
+		"""
 		x1, y1 = point_1
 		x2, y2 = point_2
 		x3, y3 = point_3
@@ -257,7 +289,13 @@ class PoseEstimator:
 		return abs(int(math.degrees(math.atan(tan_angle))))
 
 	def get_angles(self, pose_coords):
-
+		"""
+			Calculate the angles between the parts of the body from coordinates using trigonometry.
+			
+			:param cv2.Image image: The current frame from the webcam stream.
+			:param str pose_coords: The estimated pose coordinates of the image.
+			:param dict joint_colours: The assigned colours of the annotations depending on the errors.
+		"""
 		left_wrist_x, left_wrist_y, left_elbow_x, left_elbow_y, left_shoulder_x, left_shoulder_y, left_hip_x, left_hip_y, left_knee_x, left_knee_y, left_ankle_x, left_ankle_y, right_wrist_x, right_wrist_y, right_elbow_x, right_elbow_y, right_shoulder_x, right_shoulder_y, right_hip_x, right_hip_y, right_knee_x, right_knee_y, right_ankle_x, right_ankle_y, nose_x, nose_y = pose_coords
 
 		angle_dict = {}
