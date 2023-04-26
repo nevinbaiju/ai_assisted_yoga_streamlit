@@ -82,6 +82,8 @@ def display_reference_image(poses):
         poses,
         key="filter1-type",
     )
+    with open('.current_pose.txt', 'w') as file:
+        file.write(pose)
     try:
         with open(f'pose_images/{pose}.jpg', 'rb') as file:
             img = file.read()

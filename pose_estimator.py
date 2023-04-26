@@ -38,8 +38,8 @@ class PoseEstimator:
 		:pose_name str The name of the pose that should be taken as the reference pose.
 		"""
 		with open('poses.json') as jsonfile:
-				pose_dict = json.load(jsonfile)
-		self.reference_angles = pose_dict[pose_name]
+				self.pose_dict = json.load(jsonfile)
+		self.reference_angles = self.pose_dict[pose_name]
 
 		
 	def get_pose_coords(self, image):
@@ -132,6 +132,8 @@ class PoseEstimator:
 		:param dict estimated_angles: The angles between the body parts of the user that is analyzed.
 		"""
 		angle_diff = {}
+		# print(estimated_angles)
+		# print(self.reference_angles)
 		for key in self.reference_angles.keys():
 			diff = abs(((self.reference_angles[key] - estimated_angles[key])/90))
 			colour = (0, abs(int((1-diff)*255)), abs(int(diff*255)))
