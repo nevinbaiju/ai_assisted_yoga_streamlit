@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort
 from helpers import extract_poses, save_angles, read_poses_json
 import time
 import os
+import shutil
 
 if not os.path.exists('uploads'):
     os.mkdir('uploads')
@@ -37,11 +38,9 @@ def upload_image():
     # poses = enumerate(poses)
     if request.method == 'POST':
         image = request.files['image']
-        print(image)
         if image:
-            filename = str(time.time())
-            image.save(f'./uploads/{filename}.jpg')
-            angles = extract_poses(f'./uploads/{filename}.jpg')
+            image.save('./uploads/latest.jpg')
+            angles = extract_poses('./uploads/latest.jpg')
 
         return render_template('upload_screen.html', image='processed_cache/1.jpg', 
                                                            angles=angles, 
@@ -55,6 +54,7 @@ def confirm_angles():
         angles = eval(request.form['angles'])
         pose_name = request.form['pose_name']
         save_angles(angles, pose_name)
+        shutil.copyfile('./uploads/latest.jpg', f'./pose_images/{pose_name}.jpg')
 
         return redirect(url_for('upload_image'))
     else:

@@ -9,6 +9,7 @@ services:
       FLASK_APP: pose_recorder_app.py
     volumes:
       - ./poses.json:/app/poses.json
+      - ./pose_images:/app/pose_images
 
   streamlit:
     build:
@@ -18,3 +19,4 @@ services:
       - "8501:8501"
     volumes:
       - ./poses.json:/app/poses.json
+      - ./pose_images:/app/pose_images
