@@ -131,6 +131,9 @@ class PoseEstimator:
 		This function assigns an approporiate colour depending on the error of the angle the user makes with the reference pose.
 		:param dict estimated_angles: The angles between the body parts of the user that is analyzed.
 		"""
+		with open('.current_pose.txt', 'r') as file:
+			pose = file.read()
+		self.set_reference_angle(pose)
 		angle_diff = {}
 		# print(estimated_angles)
 		# print(self.reference_angles)
